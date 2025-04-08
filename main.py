@@ -68,3 +68,6 @@ st.dataframe(aggr_df)
 
 st.subheader("Market Data")
 st.dataframe(market_df)
+
+print("NewsAPI response keys:", response.json().keys())
+print("Sample article:", response.json()["articles"][0])
