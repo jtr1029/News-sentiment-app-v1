@@ -1,9 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
     print("Market columns:", market_df.columns)
@@ -30,5 +27,17 @@ def plot_sentiment_distribution(scored_df):
     plt.title("Distribution of Sentiment Scores")
     plt.xlabel("Sentiment Score")
     plt.ylabel("Frequency")
+    plt.tight_layout()
+    return plt
+
+
+def plot_sentiment_timeseries(aggr_df):
+    plt.figure(figsize=(10,4))
+    plt.plot(aggr_df['Date'], aggr_df['sentiment'], color='green', label='Daily Avg Sentiment')
+    plt.title("Sentiment Scores Over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Average Sentiment")
+    plt.legend()
+    plt.xticks(rotation=45)
     plt.tight_layout()
     return plt
