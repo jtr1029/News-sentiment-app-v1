@@ -41,8 +41,12 @@ st.dataframe(sample_news[['date', 'text']].head())
 
 # 💬 Sentiment scoring and analysis
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
-# 📉 Sentiment Volatility (Rolling Std Dev)
+# 📉 Sentiment Volatility
+vol_df = analysis.calculate_sentiment_volatility(scored_df)
 st.subheader("Sentiment Volatility (5-Day Rolling Std Dev)")
+vol_plot = analysis.plot_sentiment_volatility(vol_df)
+st.pyplot(vol_plot)
+
 scored_df = analysis.calculate_sentiment_volatility(scored_df, window=5)
 st.line_chart(scored_df.set_index('date')['sentiment_volatility'])
 
