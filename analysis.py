@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
     print("Market columns:", market_df.columns)
@@ -10,7 +9,6 @@ def merge_data(sentiment_df, market_df):
     print("Market dtypes:\n", market_df.dtypes)
     merged = pd.merge(sentiment_df, market_df, on='Date', how='inner')
     return merged
-
 
 def plot_comparison(merged_df, dual_axis=False, simplify_dates=False, smooth=False):
     fig, ax1 = plt.subplots(figsize=(10, 5))
@@ -40,7 +38,6 @@ def plot_comparison(merged_df, dual_axis=False, simplify_dates=False, smooth=Fal
     fig.tight_layout()
     return fig
 
-
 def plot_sentiment_distribution(scored_df):
     plt.figure(figsize=(8, 4))
     plt.hist(scored_df['sentiment'], bins=20, color='skyblue', edgecolor='black')
@@ -49,7 +46,6 @@ def plot_sentiment_distribution(scored_df):
     plt.ylabel("Frequency")
     plt.tight_layout()
     return plt
-
 
 def plot_sentiment_timeseries(aggr_df):
     plt.figure(figsize=(10, 4))
@@ -62,12 +58,12 @@ def plot_sentiment_timeseries(aggr_df):
     plt.tight_layout()
     return plt
 
-
 def calculate_sentiment_volatility(scored_df, window=5):
     scored_df = scored_df.copy()
+    scored_df['date'] = pd.to_datetime(scored_df['date'])  # Ensure proper datetime format
+    scored_df = scored_df.sort_values('date')
     scored_df['sentiment_volatility'] = scored_df['sentiment'].rolling(window=window).std()
     return scored_df
-
 
 def plot_sentiment_volatility(scored_df):
     df = calculate_sentiment_volatility(scored_df)
