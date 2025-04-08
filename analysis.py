@@ -2,9 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def merge_data(sentiment_df, market_df):
-    sentiment_df['Date'] = pd.to_datetime(sentiment_df['Date'])  # Already renamed in aggregation
-    market_df['Date'] = pd.to_datetime(market_df['Date'])
-    merged = pd.merge(sentiment_df, market_df, on='Date', how='inner')
+    sentiment_df['date'] = pd.to_datetime(sentiment_df['date'])  # Already renamed in aggregation
+    market_df['date'] = pd.to_datetime(market_df['date'])
+    merged = pd.merge(sentiment_df, market_df, on='date', how='inner')
     return merged
 
 
