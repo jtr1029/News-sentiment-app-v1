@@ -61,7 +61,14 @@ def plot_sentiment_timeseries(aggr_df):
     plt.xticks(rotation=45)
     plt.tight_layout()
     return plt
-def calculate_sentiment_volatility(scored_df, window=5):
-    scored_df = scored_df.copy()
-    scored_df['sentiment_volatility'] = scored_df['sentiment'].rolling(window=window).std()
-    return scored_df
+def plot_sentiment_volatility(scored_df):
+    scored_df = scored_df.dropna(subset=['sentiment_volatility'])  # Drop NaNs from initial rolling
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(scored_df['date'], scored_df['sentiment_volatility'], color='slateblue', linewidth=2)
+    ax.set_title("Sentiment Volatility (5-Day Rolling Std Dev)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Volatility")
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    fig.autofmt_xdate()
+    fig.tight_layout()
+    return fig
