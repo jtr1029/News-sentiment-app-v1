@@ -26,8 +26,18 @@ sample_news = pd.DataFrame({
 
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
 aggr_df = aggregation.aggregate_sentiment(scored_df)
-
 market_df = market_data.get_market_data(ticker, *date_range)
+
+# 🐛 Debug: show dataframes before merge
+st.subheader("Debug: Aggregated Sentiment Columns")
+st.write(aggr_df.columns)
+st.dataframe(aggr_df.head())
+
+st.subheader("Debug: Market Data Columns")
+st.write(market_df.columns)
+st.dataframe(market_df.head())
+
+# ⛓ Merge and plot
 merged_df = analysis.merge_data(aggr_df, market_df)
 
 st.subheader("Sentiment and Market Close Over Time")
