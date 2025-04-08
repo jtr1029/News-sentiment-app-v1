@@ -39,6 +39,15 @@ st.write(market_df.columns)
 st.write(market_df.dtypes)
 st.dataframe(market_df.head())
 
+# Display news with sentiment scores
+st.subheader("Scored News Headlines")
+st.dataframe(scored_df[['date', 'text', 'sentiment']])
+
+# 🎯 Plot sentiment distribution
+st.subheader("Distribution of Individual Sentiment Scores")
+dist_plot = analysis.plot_sentiment_distribution(scored_df)
+st.pyplot(dist_plot)
+
 # ⛓ Merge and plot
 merged_df = analysis.merge_data(aggr_df, market_df)
 
