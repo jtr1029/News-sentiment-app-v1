@@ -15,13 +15,18 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
     )
 
     response = requests.get(url)
-    articles = response.json().get("articles", [])[:max_articles]
+    articles = response.json().get("articles", [])
+
+    # DEBUG
+    if not articles:
+        print("⚠️ No articles returned from NewsAPI.")
 
     data = []
-    for article in articles:
+    for article in articles[:max_articles]:
         data.append({
             "date": article.get("publishedAt", "")[:10],
-            "text": article.get("title", "")
+            "text": article.get("title", "")  # ⬅️ this is CRITICAL
         })
 
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    return df
