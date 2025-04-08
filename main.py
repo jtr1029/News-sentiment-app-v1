@@ -12,16 +12,12 @@ st.title("📈 News Sentiment vs Market Risk")
 ticker = st.text_input("Enter stock ticker:", value=config.DEFAULT_TICKER)
 date_range = st.date_input("Select date range:", value=config.DEFAULT_DATE_RANGE)
 
-# Simulated News Data
+# Simulated News Data - now for full year
 sample_news = pd.DataFrame({
-    'date': pd.date_range(date_range[0], periods=5),
+    'date': pd.date_range(date_range[0], date_range[1]),
     'text': [
-        "Stock prices soar as investors gain confidence.",
-        "The market experiences slight corrections amid inflation fears.",
-        "Tech stocks rally after strong earnings reports.",
-        "Analysts warn of possible downturn due to rate hikes.",
-        "Investors remain optimistic despite mixed signals."
-    ]
+        "Market sentiment fluctuates due to economic reports."
+    ] * (pd.date_range(date_range[0], date_range[1]).size)
 })
 
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
