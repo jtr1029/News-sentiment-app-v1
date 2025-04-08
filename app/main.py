@@ -1,6 +1,12 @@
 import streamlit as st
 import pandas as pd
-from app import config, utils, sentiment_analysis, aggregation, market_data, analysis
+import config
+import utils
+import sentiment_analysis
+import aggregation
+import market_data
+import analysis
+
 
 st.title("📈 News Sentiment vs Market Risk")
 
