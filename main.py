@@ -7,15 +7,20 @@ import aggregation
 import market_data
 import analysis
 from news_fetcher import fetch_news
+from datetime import datetime, timedelta
 
 st.title("📈 News Sentiment vs Market Risk")
 
-# Ticker & Date Range Input
+# Ticker Input
 ticker = st.text_input("Enter stock ticker:", value=config.DEFAULT_TICKER)
-date_range = st.date_input("Select date range:", value=config.DEFAULT_DATE_RANGE)
+
+# Automatically define last 10 days as date range
+end_date = datetime.today().date()
+start_date = end_date - timedelta(days=10)
+date_range = (start_date, end_date)
 
 # Fetch real news using NewsAPI
-sample_news = fetch_news(ticker, date_range[0], date_range[1])
+sample_news = fetch_news(ticker, start_date, end_date)
 
 # Show the returned news from API
 st.subheader("📰 News Headlines Fetched from NewsAPI")
@@ -37,7 +42,7 @@ st.dataframe(sample_news[['date', 'text']].head())
 # 💬 Sentiment scoring and analysis
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
 aggr_df = aggregation.aggregate_sentiment(scored_df)
-market_df = market_data.get_market_data(ticker, *date_range)
+market_df = market_data.get_market_data(ticker, start_date, end_date)
 
 # 📋 Display scored headlines
 st.subheader("Scored News Headlines")
@@ -68,4 +73,3 @@ st.dataframe(aggr_df)
 
 st.subheader("Market Data")
 st.dataframe(market_df)
-
