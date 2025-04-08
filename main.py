@@ -28,17 +28,6 @@ scored_df = sentiment_analysis.process_news_dataframe(sample_news)
 aggr_df = aggregation.aggregate_sentiment(scored_df)
 market_df = market_data.get_market_data(ticker, *date_range)
 
-# 🐛 Debug: show dataframes before merge
-st.subheader("Debug: Aggregated Sentiment Columns")
-st.write(aggr_df.columns)
-st.write(aggr_df.dtypes)
-st.dataframe(aggr_df.head())
-
-st.subheader("Debug: Market Data Columns")
-st.write(market_df.columns)
-st.write(market_df.dtypes)
-st.dataframe(market_df.head())
-
 # Display news with sentiment scores
 st.subheader("Scored News Headlines")
 st.dataframe(scored_df[['date', 'text', 'sentiment']])
