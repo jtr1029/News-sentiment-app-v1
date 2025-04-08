@@ -60,10 +60,16 @@ def plot_sentiment_timeseries(aggr_df):
 
 def calculate_sentiment_volatility(scored_df, window=5):
     scored_df = scored_df.copy()
-    scored_df['date'] = pd.to_datetime(scored_df['date'])  # Ensure proper datetime format
-    scored_df = scored_df.sort_values('date')
-    scored_df['sentiment_volatility'] = scored_df['sentiment'].rolling(window=window).std()
-    return scored_df
+    scored_df['date'] = pd.to_datetime(scored_df['date'])
+
+    # Group by date first to get average daily sentiment
+    daily_sentiment = scored_df.groupby('date')['sentiment'].mean().reset_index()
+
+    # Now apply rolling std dev on the daily averages
+    daily_sentiment['sentiment_volatility'] = daily_sentiment['sentiment'].rolling(window=window).std()
+
+    return daily_sentiment
+
 
 def plot_sentiment_volatility(scored_df):
     df = calculate_sentiment_volatility(scored_df)
