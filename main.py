@@ -14,22 +14,15 @@ st.title("📈 News Sentiment vs Market Risk")
 ticker = st.text_input("Enter stock ticker:", value=config.DEFAULT_TICKER)
 date_range = st.date_input("Select date range:", value=config.DEFAULT_DATE_RANGE)
 
-# Simulated News Data - one random statement per day
-random_texts = [
-    "Stocks surge as market optimism grows.",
-    "Economic uncertainty dampens investor sentiment.",
-    "Technology shares rally after earnings reports.",
-    "Market struggles with inflation concerns.",
-    "Analysts predict a bullish trend.",
-    "Investors cautious ahead of Fed meeting."
-]
-date_index = pd.date_range(date_range[0], date_range[1])
-news_texts = [random.choice(random_texts) for _ in range(len(date_index))]
+from news_fetcher import fetch_news
 
-sample_news = pd.DataFrame({
-    'date': date_index,
-    'text': news_texts
-})
+sample_news = fetch_news(ticker, date_range[0], date_range[1])
+
+if sample_news.empty:
+    st.warning("No news found for the selected period and ticker.")
+else:
+    scored_df = sentiment_analysis.process_news_dataframe(sample_news)
+    ...
 
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
 aggr_df = aggregation.aggregate_sentiment(scored_df)
