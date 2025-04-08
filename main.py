@@ -1,3 +1,14 @@
+import os
+import subprocess
+import sys
+
+# Try to import, if fail, install and reload
+try:
+    from textblob import TextBlob
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "textblob"])
+    from textblob import TextBlob
+
 import streamlit as st
 import pandas as pd
 import config
