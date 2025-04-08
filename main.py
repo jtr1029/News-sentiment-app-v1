@@ -37,6 +37,11 @@ st.subheader("Distribution of Individual Sentiment Scores")
 dist_plot = analysis.plot_sentiment_distribution(scored_df)
 st.pyplot(dist_plot)
 
+# 📊 Plot sentiment over time
+st.subheader("Aggregated Sentiment Over Time")
+sentiment_time_plot = analysis.plot_sentiment_timeseries(aggr_df)
+st.pyplot(sentiment_time_plot)
+
 # ⛓ Merge and plot
 merged_df = analysis.merge_data(aggr_df, market_df)
 
