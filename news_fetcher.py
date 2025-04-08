@@ -40,3 +40,6 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
     print(df.head())
 
     return df
+
+print("NewsAPI response keys:", response.json().keys())
+print("Sample article:", response.json()["articles"][0])
