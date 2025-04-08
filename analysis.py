@@ -61,3 +61,7 @@ def plot_sentiment_timeseries(aggr_df):
     plt.xticks(rotation=45)
     plt.tight_layout()
     return plt
+def calculate_sentiment_volatility(scored_df, window=5):
+    scored_df = scored_df.copy()
+    scored_df['sentiment_volatility'] = scored_df['sentiment'].rolling(window=window).std()
+    return scored_df
