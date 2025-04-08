@@ -61,10 +61,10 @@ st.pyplot(sentiment_time_plot)
 # 🔄 Merge & compare with market data
 merged_df = analysis.merge_data(aggr_df, market_df)
 st.subheader("Sentiment and Market Close Over Time")
-fig = analysis.plot_comparison(merged_df)
+fig = analysis.plot_comparison(merged_df, dual_axis=True)
 st.pyplot(fig)
 
-# 🧾 Optional: raw data
+# 🧞 Optional: raw data
 st.subheader("Raw Sentiment Data")
 st.dataframe(scored_df)
 
