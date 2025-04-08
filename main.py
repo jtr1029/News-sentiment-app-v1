@@ -41,6 +41,11 @@ st.dataframe(sample_news[['date', 'text']].head())
 
 # 💬 Sentiment scoring and analysis
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
+# 📉 Sentiment Volatility (Rolling Std Dev)
+st.subheader("Sentiment Volatility (5-Day Rolling Std Dev)")
+scored_df = analysis.calculate_sentiment_volatility(scored_df, window=5)
+st.line_chart(scored_df.set_index('date')['sentiment_volatility'])
+
 aggr_df = aggregation.aggregate_sentiment(scored_df)
 market_df = market_data.get_market_data(ticker, start_date, end_date)
 
