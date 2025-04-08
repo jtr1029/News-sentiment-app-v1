@@ -9,16 +9,28 @@ def merge_data(sentiment_df, market_df):
     merged = pd.merge(sentiment_df, market_df, on='Date', how='inner')
     return merged
 
-def plot_comparison(merged_df):
-    plt.figure(figsize=(10,5))
-    plt.plot(merged_df['Date'], merged_df['sentiment'], label='Sentiment Score')
-    plt.plot(merged_df['Date'], merged_df['market_close'], label='Market Close')
-    plt.legend()
-    plt.title("Sentiment vs Market Movement")
-    plt.xlabel("Date")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    return plt
+def plot_comparison(merged_df, dual_axis=False):
+    import matplotlib.pyplot as plt
+
+    fig, ax1 = plt.subplots()
+
+    ax1.plot(merged_df['Date'], merged_df['sentiment'], color='tab:blue', label='Sentiment Score')
+    ax1.set_xlabel('Date')
+    ax1.set_ylabel('Sentiment Score', color='tab:blue')
+    ax1.tick_params(axis='y', labelcolor='tab:blue')
+
+    if dual_axis:
+        ax2 = ax1.twinx()
+        ax2.plot(merged_df['Date'], merged_df['market_close'], color='tab:orange', label='Market Close')
+        ax2.set_ylabel('Market Close', color='tab:orange')
+        ax2.tick_params(axis='y', labelcolor='tab:orange')
+    else:
+        ax1.plot(merged_df['Date'], merged_df['market_close'], color='tab:orange', label='Market Close')
+
+    plt.title('Sentiment vs Market Movement')
+    fig.tight_layout()
+    return fig
+
 
 
 def plot_sentiment_distribution(scored_df):
