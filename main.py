@@ -47,6 +47,7 @@ st.subheader("Sentiment Volatility (5-Day Rolling Std Dev)")
 vol_plot = analysis.plot_sentiment_volatility(vol_df)
 st.pyplot(vol_plot)
 
+
 scored_df = analysis.calculate_sentiment_volatility(scored_df, window=5)
 st.line_chart(scored_df.set_index('date')['sentiment_volatility'])
 
