@@ -1,6 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import pandas as pd
+import matplotlib.pyplot as plt
+
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
     print("Market columns:", market_df.columns)
@@ -17,5 +20,15 @@ def plot_comparison(merged_df):
     plt.title("Sentiment vs Market Movement")
     plt.xlabel("Date")
     plt.xticks(rotation=45)
+    plt.tight_layout()
+    return plt
+
+
+def plot_sentiment_distribution(scored_df):
+    plt.figure(figsize=(8,4))
+    plt.hist(scored_df['sentiment'], bins=20, color='skyblue', edgecolor='black')
+    plt.title("Distribution of Sentiment Scores")
+    plt.xlabel("Sentiment Score")
+    plt.ylabel("Frequency")
     plt.tight_layout()
     return plt
