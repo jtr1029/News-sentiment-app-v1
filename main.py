@@ -10,12 +10,18 @@ from news_fetcher import fetch_news
 
 st.title("📈 News Sentiment vs Market Risk")
 
+# Ticker & Date Range Input
 ticker = st.text_input("Enter stock ticker:", value=config.DEFAULT_TICKER)
 date_range = st.date_input("Select date range:", value=config.DEFAULT_DATE_RANGE)
 
-# 🔗 Fetch real news articles
+# Fetch real news using NewsAPI
 sample_news = fetch_news(ticker, date_range[0], date_range[1])
 
+# Show the returned news from API
+st.subheader("📰 News Headlines Fetched from NewsAPI")
+st.dataframe(sample_news[['date', 'text']].head())
+
+# Handle missing or invalid API response
 if sample_news.empty:
     st.error("No news articles were found for this ticker and date range.")
     st.stop()
