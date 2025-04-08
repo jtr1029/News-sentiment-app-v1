@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-API_KEY = os.getenv("NEWS_API_KEY")
+API_KEY = os.getenv("86e93cfa23e44affbfabcc6e25334caa")
 
 def fetch_news(ticker, from_date, to_date, max_articles=100):
     query = f'"{ticker}"'
