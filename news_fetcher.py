@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-API_KEY = os.getenv("86e93cfa23e44affbfabcc6e25334caa")
+API_KEY = os.getenv("NEWS_API_KEY")
 
 def fetch_news(ticker, from_date, to_date, max_articles=100):
     query = f'"{ticker}"'
@@ -21,7 +21,7 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
     for article in articles:
         data.append({
             "date": article.get("publishedAt", "")[:10],
-            "text": article.get("title", "")  # Ensure 'text' is created
+            "text": article.get("title", "")
         })
 
     return pd.DataFrame(data)
