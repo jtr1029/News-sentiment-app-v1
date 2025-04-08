@@ -23,6 +23,9 @@ if sample_news.empty:
 else:
     scored_df = sentiment_analysis.process_news_dataframe(sample_news)
     ...
+if 'text' not in sample_news.columns:
+    st.error("News data is missing the 'text' field. Check API response.")
+    st.stop()
 
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
 aggr_df = aggregation.aggregate_sentiment(scored_df)
