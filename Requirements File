@@ -7,3 +7,4 @@ nltk
 vaderSentiment==3.3.2
 openai
 transformers
+textblob
