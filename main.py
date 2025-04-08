@@ -19,7 +19,7 @@ sample_news = fetch_news(ticker, date_range[0], date_range[1])
 
 # Show the returned news from API
 st.subheader("📰 News Headlines Fetched from NewsAPI")
-st.dataframe(sample_news[['date', 'text']].head())
+st.write("📋 Columns returned:", sample_news.columns.tolist())  # Debugging line
 
 # Handle missing or invalid API response
 if sample_news.empty:
@@ -30,6 +30,9 @@ if 'text' not in sample_news.columns:
     st.error("The news data is missing a 'text' column. Please check the fetch_news function.")
     st.dataframe(sample_news)
     st.stop()
+
+# Show the preview of news headlines
+st.dataframe(sample_news[['date', 'text']].head())
 
 # 💬 Sentiment scoring and analysis
 scored_df = sentiment_analysis.process_news_dataframe(sample_news)
