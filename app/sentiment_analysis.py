@@ -3,6 +3,8 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 nltk.download('vader_lexicon')
 
+analyzer = SentimentIntensityAnalyzer()
+
 def score_sentiment(text):
     if not isinstance(text, str):
         return 0.0
