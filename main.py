@@ -31,10 +31,12 @@ market_df = market_data.get_market_data(ticker, *date_range)
 # 🐛 Debug: show dataframes before merge
 st.subheader("Debug: Aggregated Sentiment Columns")
 st.write(aggr_df.columns)
+st.write(aggr_df.dtypes)
 st.dataframe(aggr_df.head())
 
 st.subheader("Debug: Market Data Columns")
 st.write(market_df.columns)
+st.write(market_df.dtypes)
 st.dataframe(market_df.head())
 
 # ⛓ Merge and plot
