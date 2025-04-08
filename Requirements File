@@ -4,6 +4,6 @@ yfinance
 matplotlib
 scikit-learn
 nltk
-vaderSentiment
+vaderSentiment==3.3.2
 openai
 transformers
