@@ -36,7 +36,7 @@ st.subheader("📰 News Headlines Fetched from NewsAPI")
 st.write("📋 Columns returned:", sample_news.columns.tolist())
 
 # 📈 Calculate Beta and Alpha against benchmark (e.g., S&P 500)
-benchmark_ticker = "^GSPC"  # S&P 500 symbol
+benchmark_ticker = "^GSPC"
 benchmark_df = market_data.get_market_data(benchmark_ticker, start_date, end_date)
 
 # 📈 Market data for stock
@@ -108,7 +108,18 @@ st.dataframe(target_stock_df)
 
 # 📐 Sentiment Beta vs Market
 sentiment_beta, sentiment_alpha = analysis.calculate_sentiment_beta(aggr_df, target_stock_df)
-
 st.subheader("Sentiment Sensitivity to Market (Sentiment Beta)")
 st.metric("Sentiment Beta", round(sentiment_beta, 3))
 st.metric("Sentiment Alpha", round(sentiment_alpha, 5))
+
+# 📉 Conditional VaR (Sentiment-Driven Downside Risk)
+st.subheader("📉 Downside Risk Triggered by Bearish Sentiment")
+
+try:
+    var_value, cvar_value, filtered_returns = analysis.calculate_conditional_var(
+        aggr_df, target_stock_df, sentiment_threshold=-0.3
+    )
+    st.metric("Value at Risk (VaR)", f"{var_value:.2%}")
+    st.metric("Conditional VaR (CVaR)", f"{cvar_value:.2%}")
+except Exception as e:
+    st.warning(f"Could not compute VaR/CVaR: {e}")
