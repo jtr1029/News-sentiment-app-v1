@@ -1,7 +1,9 @@
+from sklearn.linear_model import LinearRegression
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from sklearn.linear_model import LinearRegression
+
 
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
