@@ -27,12 +27,12 @@ def fetch_news_cached(ticker, start_date, end_date):
 
 # Load news from session or fetch on button press
 sample_news = st.session_state.get('sample_news', pd.DataFrame())
-if st.button("🔄 Fetch News from NewsAPI"):
+if st.button("🔄 Fetch News from GNews API"):
     sample_news = fetch_news_cached(ticker, start_date, end_date)
     st.session_state['sample_news'] = sample_news
 
 # 📰 Show the returned news from API
-st.subheader("📰 News Headlines Fetched from NewsAPI")
+st.subheader("📰 News Headlines Fetched from GNews API")
 st.write("📋 Columns returned:", sample_news.columns.tolist())
 
 # 📈 Calculate Beta and Alpha against benchmark (e.g., S&P 500)
@@ -85,46 +85,4 @@ dist_plot = analysis.plot_sentiment_distribution(scored_df)
 st.pyplot(dist_plot)
 
 # 📈 Aggregated sentiment over time
-aggr_df = aggregation.aggregate_sentiment(scored_df)
-st.subheader("Aggregated Sentiment Over Time")
-sentiment_time_plot = analysis.plot_sentiment_timeseries(aggr_df)
-st.pyplot(sentiment_time_plot)
-
-# 🔄 Merge and plot sentiment vs market
-merged_df = analysis.merge_data(aggr_df, target_stock_df)
-st.subheader("Sentiment and Market Close Over Time")
-fig = analysis.plot_comparison(merged_df, dual_axis=True, simplify_dates=True)
-st.pyplot(fig)
-
-# 🧾 Raw Data Section
-st.subheader("Raw Sentiment Data")
-st.dataframe(scored_df)
-
-st.subheader("Aggregated Sentiment")
-st.dataframe(aggr_df)
-
-st.subheader("Market Data")
-st.dataframe(target_stock_df)
-
-# 📐 Sentiment Beta vs Market
-sentiment_beta, sentiment_alpha = analysis.calculate_sentiment_beta(aggr_df, target_stock_df)
-st.subheader("Sentiment Sensitivity to Market (Sentiment Beta)")
-st.metric("Sentiment Beta", round(sentiment_beta, 3))
-st.metric("Sentiment Alpha", round(sentiment_alpha, 5))
-
-# 📉 Conditional VaR (Sentiment-Driven Downside Risk)
-st.subheader("📉 Downside Risk Triggered by Bearish Sentiment")
-
-try:
-    var_value, cvar_value, std_dev = analysis.calculate_conditional_var(
-        aggr_df,
-        market_df=target_stock_df,
-        sentiment_col='sentiment',
-        sentiment_threshold=-0.3,
-        alpha=0.05
-    )
-    st.metric("Value at Risk (VaR)", f"{var_value:.2%}")
-    st.metric("Conditional VaR (CVaR)", f"{cvar_value:.2%}")
-    st.metric("Tail Std Dev", f"{std_dev:.2%}")
-except Exception as e:
-    st.warning(f"Could not compute VaR/CVaR: {e}")
+aggr_df = aggregation.aggregate_sentiment(scored
