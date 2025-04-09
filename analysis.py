@@ -132,12 +132,35 @@ def calculate_sentiment_beta(aggr_sentiment_df, market_df):
     sentiment_alpha = model.intercept_
     return sentiment_beta, sentiment_alpha
 
-def calculate_conditional_var(sentiment_series, alpha=0.05):
-    sentiment_series = sentiment_series.dropna()
-    sorted_returns = sentiment_series.sort_values()
+def calculate_conditional_var(sentiment_df, market_df, sentiment_col='sentiment', sentiment_threshold=-0.3, alpha=0.05):
+    """
+    Calculate Conditional Value at Risk (CVaR) and Value at Risk (VaR) 
+    for market returns conditional on bearish sentiment.
+    """
+    sentiment_df = sentiment_df.copy()
+    market_df = market_df.copy()
 
-    var_cutoff = sorted_returns.quantile(alpha)
-    cvar = sorted_returns[sorted_returns <= var_cutoff].mean()
-    std_dev = sorted_returns[sorted_returns <= var_cutoff].std()
+    # Ensure proper datetime format
+    sentiment_df['Date'] = pd.to_datetime(sentiment_df['Date'])
+    market_df['Date'] = pd.to_datetime(market_df['Date'])
 
-    return var_cutoff, cvar, std_dev
+    # Compute daily returns from market_df
+    market_df['returns'] = market_df['market_close'].pct_change()
+
+    # Merge on date
+    merged = pd.merge(sentiment_df, market_df[['Date', 'returns']], on='Date', how='inner')
+    merged = merged.dropna(subset=['returns', sentiment_col])
+
+    # Filter: only bearish sentiment days
+    bearish = merged[merged[sentiment_col] < sentiment_threshold]
+
+    if bearish.empty or len(bearish) < 5:
+        raise ValueError("Not enough bearish sentiment data points to compute tail risk.")
+
+    # Calculate VaR and CVaR
+    returns = bearish['returns']
+    var = np.percentile(returns, alpha * 100)
+    cvar = returns[returns <= var].mean()
+    std_dev = returns[returns <= var].std()
+
+    return var, cvar, std_dev
