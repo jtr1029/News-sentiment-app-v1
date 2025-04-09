@@ -20,8 +20,16 @@ end_date = datetime.today().date()
 start_date = end_date - timedelta(days=10)
 date_range = (start_date, end_date)
 
-# Fetch real news using NewsAPI
-sample_news = fetch_news(ticker, start_date, end_date)
+# Cached fetch_news call to reduce API load
+@st.cache_data(ttl=3600)
+def fetch_news_cached(ticker, start_date, end_date):
+    return fetch_news(ticker, start_date, end_date)
+
+# Load news from session or fetch on button press
+sample_news = st.session_state.get('sample_news', pd.DataFrame())
+if st.button("🔄 Fetch News from NewsAPI"):
+    sample_news = fetch_news_cached(ticker, start_date, end_date)
+    st.session_state['sample_news'] = sample_news
 
 # 📰 Show the returned news from API
 st.subheader("📰 News Headlines Fetched from NewsAPI")
@@ -31,8 +39,11 @@ st.write("📋 Columns returned:", sample_news.columns.tolist())
 benchmark_ticker = "^GSPC"  # S&P 500 symbol
 benchmark_df = market_data.get_market_data(benchmark_ticker, start_date, end_date)
 
+# 📈 Market data for stock
+target_stock_df = market_data.get_market_data(ticker, start_date, end_date)
+
 # Compute daily returns for both stock and benchmark
-stock_returns = analysis.compute_daily_returns(market_df)
+stock_returns = analysis.compute_daily_returns(target_stock_df)
 benchmark_returns = analysis.compute_daily_returns(benchmark_df)
 
 # Calculate beta and alpha
@@ -45,7 +56,7 @@ st.metric("Alpha", round(alpha, 5))
 
 # 🚫 Handle missing or invalid API response
 if sample_news.empty:
-    st.error("No news articles were found for this ticker and date range.")
+    st.warning("No news fetched yet. Click the button above.")
     st.stop()
 
 if 'text' not in sample_news.columns:
@@ -79,11 +90,8 @@ st.subheader("Aggregated Sentiment Over Time")
 sentiment_time_plot = analysis.plot_sentiment_timeseries(aggr_df)
 st.pyplot(sentiment_time_plot)
 
-# 📈 Market data
-market_df = market_data.get_market_data(ticker, start_date, end_date)
-
 # 🔄 Merge and plot sentiment vs market
-merged_df = analysis.merge_data(aggr_df, market_df)
+merged_df = analysis.merge_data(aggr_df, target_stock_df)
 st.subheader("Sentiment and Market Close Over Time")
 fig = analysis.plot_comparison(merged_df, dual_axis=True, simplify_dates=True)
 st.pyplot(fig)
@@ -96,4 +104,4 @@ st.subheader("Aggregated Sentiment")
 st.dataframe(aggr_df)
 
 st.subheader("Market Data")
-st.dataframe(market_df)
+st.dataframe(target_stock_df)
