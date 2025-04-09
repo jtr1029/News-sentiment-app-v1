@@ -7,3 +7,4 @@ nltk
 openai
 transformers
 python-dotenv
+scikit-learn
