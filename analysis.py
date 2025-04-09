@@ -4,7 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
     print("Market columns:", market_df.columns)
@@ -73,7 +72,6 @@ def calculate_sentiment_volatility(scored_df, window=5):
 
     return daily_sentiment
 
-
 def plot_sentiment_volatility(scored_df):
     df = calculate_sentiment_volatility(scored_df)
     df = df.dropna(subset=['sentiment_volatility'])
@@ -107,9 +105,13 @@ def compute_daily_returns(price_df):
     returns = price_df.set_index('Date')['market_close'].pct_change().dropna()
     return returns
 
-from sklearn.linear_model import LinearRegression
-
 def calculate_sentiment_beta(aggr_sentiment_df, market_df):
+    # Ensure dates are datetime
+    aggr_sentiment_df = aggr_sentiment_df.copy()
+    market_df = market_df.copy()
+    aggr_sentiment_df['Date'] = pd.to_datetime(aggr_sentiment_df['Date'])
+    market_df['Date'] = pd.to_datetime(market_df['Date'])
+
     # Compute daily market returns
     market_df['returns'] = market_df['market_close'].pct_change()
 
@@ -129,4 +131,3 @@ def calculate_sentiment_beta(aggr_sentiment_df, market_df):
     sentiment_beta = model.coef_[0]
     sentiment_alpha = model.intercept_
     return sentiment_beta, sentiment_alpha
-
