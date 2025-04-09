@@ -1,8 +1,8 @@
 from sklearn.linear_model import LinearRegression
-
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
 
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
@@ -11,6 +11,7 @@ def merge_data(sentiment_df, market_df):
     print("Market dtypes:\n", market_df.dtypes)
     merged = pd.merge(sentiment_df, market_df, on='Date', how='inner')
     return merged
+
 
 def plot_comparison(merged_df, dual_axis=False, simplify_dates=False, smooth=False):
     fig, ax1 = plt.subplots(figsize=(10, 5))
@@ -40,6 +41,7 @@ def plot_comparison(merged_df, dual_axis=False, simplify_dates=False, smooth=Fal
     fig.tight_layout()
     return fig
 
+
 def plot_sentiment_distribution(scored_df):
     plt.figure(figsize=(8, 4))
     plt.hist(scored_df['sentiment'], bins=20, color='skyblue', edgecolor='black')
@@ -48,6 +50,7 @@ def plot_sentiment_distribution(scored_df):
     plt.ylabel("Frequency")
     plt.tight_layout()
     return plt
+
 
 def plot_sentiment_timeseries(aggr_df):
     plt.figure(figsize=(10, 4))
@@ -60,22 +63,18 @@ def plot_sentiment_timeseries(aggr_df):
     plt.tight_layout()
     return plt
 
+
 def calculate_sentiment_volatility(scored_df, window=5):
     scored_df = scored_df.copy()
     scored_df['date'] = pd.to_datetime(scored_df['date'])
-
-    # Group by date first to get average daily sentiment
     daily_sentiment = scored_df.groupby('date')['sentiment'].mean().reset_index()
-
-    # Now apply rolling std dev on the daily averages
     daily_sentiment['sentiment_volatility'] = daily_sentiment['sentiment'].rolling(window=window).std()
-
     return daily_sentiment
+
 
 def plot_sentiment_volatility(scored_df):
     df = calculate_sentiment_volatility(scored_df)
     df = df.dropna(subset=['sentiment_volatility'])
-
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.plot(df['date'], df['sentiment_volatility'], color='slateblue', linewidth=2)
     ax.set_title("Sentiment Volatility (5-Day Rolling Std Dev)")
@@ -86,48 +85,53 @@ def plot_sentiment_volatility(scored_df):
     fig.tight_layout()
     return fig
 
+
 def calculate_beta(stock_returns, benchmark_returns):
     df = pd.DataFrame({
         'stock': stock_returns,
         'benchmark': benchmark_returns
     }).dropna()
-
     X = df['benchmark'].values.reshape(-1, 1)
     y = df['stock'].values
-
     model = LinearRegression().fit(X, y)
     beta = model.coef_[0]
     alpha = model.intercept_
     return beta, alpha
+
 
 def compute_daily_returns(price_df):
     price_df = price_df.sort_values('Date')
     returns = price_df.set_index('Date')['market_close'].pct_change().dropna()
     return returns
 
+
 def calculate_sentiment_beta(aggr_sentiment_df, market_df):
-    # Ensure dates are datetime
     aggr_sentiment_df = aggr_sentiment_df.copy()
     market_df = market_df.copy()
     aggr_sentiment_df['Date'] = pd.to_datetime(aggr_sentiment_df['Date'])
     market_df['Date'] = pd.to_datetime(market_df['Date'])
-
-    # Compute daily market returns
     market_df['returns'] = market_df['market_close'].pct_change()
-
-    # Merge with sentiment data
     df = pd.merge(aggr_sentiment_df, market_df[['Date', 'returns']], on='Date', how='inner')
-
-    # Drop missing values
     df = df.dropna()
-
-    # Define X = market returns, y = sentiment scores
     X = df[['returns']]
     y = df['sentiment']
-
-    # Fit linear regression
     model = LinearRegression().fit(X, y)
-
     sentiment_beta = model.coef_[0]
     sentiment_alpha = model.intercept_
     return sentiment_beta, sentiment_alpha
+
+
+def calculate_conditional_var(aggr_df, market_df, sentiment_threshold=-0.3, quantile=0.05):
+    aggr_df = aggr_df.copy()
+    market_df = market_df.copy()
+    aggr_df['Date'] = pd.to_datetime(aggr_df['Date'])
+    market_df['Date'] = pd.to_datetime(market_df['Date'])
+    market_df['returns'] = market_df['market_close'].pct_change()
+    df = pd.merge(aggr_df, market_df[['Date', 'returns']], on='Date', how='inner')
+    df = df.dropna()
+    conditional_returns = df[df['sentiment'] < sentiment_threshold]['returns']
+    if len(conditional_returns) == 0:
+        return None, None
+    var = conditional_returns.quantile(quantile)
+    cvar = conditional_returns[conditional_returns <= var].mean()
+    return var, cvar
