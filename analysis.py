@@ -84,3 +84,22 @@ def plot_sentiment_volatility(scored_df):
     fig.autofmt_xdate()
     fig.tight_layout()
     return fig
+
+def calculate_beta(stock_returns, benchmark_returns):
+    df = pd.DataFrame({
+        'stock': stock_returns,
+        'benchmark': benchmark_returns
+    }).dropna()
+
+    X = df['benchmark'].values.reshape(-1, 1)
+    y = df['stock'].values
+
+    model = LinearRegression().fit(X, y)
+    beta = model.coef_[0]
+    alpha = model.intercept_
+    return beta, alpha
+
+def compute_daily_returns(price_df):
+    price_df = price_df.sort_values('Date')
+    returns = price_df.set_index('Date')['market_close'].pct_change().dropna()
+    return returns
