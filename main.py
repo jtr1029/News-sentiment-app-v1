@@ -27,6 +27,22 @@ sample_news = fetch_news(ticker, start_date, end_date)
 st.subheader("📰 News Headlines Fetched from NewsAPI")
 st.write("📋 Columns returned:", sample_news.columns.tolist())
 
+# 📈 Calculate Beta and Alpha against benchmark (e.g., S&P 500)
+benchmark_ticker = "^GSPC"  # S&P 500 symbol
+benchmark_df = market_data.get_market_data(benchmark_ticker, start_date, end_date)
+
+# Compute daily returns for both stock and benchmark
+stock_returns = analysis.compute_daily_returns(market_df)
+benchmark_returns = analysis.compute_daily_returns(benchmark_df)
+
+# Calculate beta and alpha
+beta, alpha = analysis.calculate_beta(stock_returns, benchmark_returns)
+
+# 📌 Display beta and alpha
+st.subheader("Market Risk (Beta & Alpha vs Benchmark)")
+st.metric("Beta", round(beta, 3))
+st.metric("Alpha", round(alpha, 5))
+
 # 🚫 Handle missing or invalid API response
 if sample_news.empty:
     st.error("No news articles were found for this ticker and date range.")
