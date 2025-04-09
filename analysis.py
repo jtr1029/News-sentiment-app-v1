@@ -3,6 +3,7 @@ from sklearn.linear_model import LinearRegression
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import numpy as np
 
 def merge_data(sentiment_df, market_df):
     print("Sentiment columns:", sentiment_df.columns)
@@ -64,10 +65,7 @@ def calculate_sentiment_volatility(scored_df, window=5):
     scored_df = scored_df.copy()
     scored_df['date'] = pd.to_datetime(scored_df['date'])
 
-    # Group by date first to get average daily sentiment
     daily_sentiment = scored_df.groupby('date')['sentiment'].mean().reset_index()
-
-    # Now apply rolling std dev on the daily averages
     daily_sentiment['sentiment_volatility'] = daily_sentiment['sentiment'].rolling(window=window).std()
 
     return daily_sentiment
@@ -106,28 +104,39 @@ def compute_daily_returns(price_df):
     return returns
 
 def calculate_sentiment_beta(aggr_sentiment_df, market_df):
-    # Ensure dates are datetime
     aggr_sentiment_df = aggr_sentiment_df.copy()
     market_df = market_df.copy()
     aggr_sentiment_df['Date'] = pd.to_datetime(aggr_sentiment_df['Date'])
     market_df['Date'] = pd.to_datetime(market_df['Date'])
 
-    # Compute daily market returns
     market_df['returns'] = market_df['market_close'].pct_change()
-
-    # Merge with sentiment data
     df = pd.merge(aggr_sentiment_df, market_df[['Date', 'returns']], on='Date', how='inner')
-
-    # Drop missing values
     df = df.dropna()
 
-    # Define X = market returns, y = sentiment scores
     X = df[['returns']]
     y = df['sentiment']
 
-    # Fit linear regression
     model = LinearRegression().fit(X, y)
-
     sentiment_beta = model.coef_[0]
     sentiment_alpha = model.intercept_
     return sentiment_beta, sentiment_alpha
+
+def calculate_conditional_var(sentiment_df, alpha=0.05):
+    if sentiment_df.empty or 'sentiment' not in sentiment_df.columns:
+        return None, None, None
+
+    sentiment_df = sentiment_df.copy()
+    sentiment_df['date'] = pd.to_datetime(sentiment_df['date'])
+    daily_returns = sentiment_df.groupby('date')['sentiment'].mean()
+
+    sorted_returns = daily_returns.sort_values()
+    cutoff_index = int(len(sorted_returns) * alpha)
+
+    if cutoff_index < 1:
+        return None, None, None
+
+    var = sorted_returns.iloc[cutoff_index]
+    cvar = sorted_returns.iloc[:cutoff_index].mean()
+    std_dev = sorted_returns.std()
+
+    return var, cvar, std_dev
