@@ -40,5 +40,4 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
     df = pd.DataFrame(records)
     print("✅ Sample news DataFrame preview:")
     print(df.head())
-
     return df
