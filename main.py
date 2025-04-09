@@ -17,7 +17,7 @@ ticker = st.text_input("Enter stock ticker:", value=config.DEFAULT_TICKER)
 
 # Define the last 10 days as the date range
 end_date = datetime.today().date()
-start_date = end_date - timedelta(days=10)
+start_date = end_date - timedelta(days=60)  # or 90, depending on how far back you want to go
 date_range = (start_date, end_date)
 
 # Cached fetch_news call to reduce API load
