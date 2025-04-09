@@ -106,9 +106,9 @@ st.dataframe(aggr_df)
 st.subheader("Market Data")
 st.dataframe(target_stock_df)
 
-sentiment_beta, sentiment_alpha = analysis.calculate_sentiment_beta(aggr_df, market_df)
+# 📐 Sentiment Beta vs Market
+sentiment_beta, sentiment_alpha = analysis.calculate_sentiment_beta(aggr_df, target_stock_df)
 
 st.subheader("Sentiment Sensitivity to Market (Sentiment Beta)")
 st.metric("Sentiment Beta", round(sentiment_beta, 3))
 st.metric("Sentiment Alpha", round(sentiment_alpha, 5))
-
