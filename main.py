@@ -15,9 +15,9 @@ st.title("📈 News Sentiment vs Market Risk")
 # Ticker Input
 ticker = st.text_input("Enter stock ticker:", value=config.DEFAULT_TICKER)
 
-# Define the last 10 days as the date range
+# Define the last 60 days as the date range
 end_date = datetime.today().date()
-start_date = end_date - timedelta(days=60)  # or 90, depending on how far back you want to go
+start_date = end_date - timedelta(days=60)
 date_range = (start_date, end_date)
 
 # Cached fetch_news call to reduce API load
@@ -116,10 +116,15 @@ st.metric("Sentiment Alpha", round(sentiment_alpha, 5))
 st.subheader("📉 Downside Risk Triggered by Bearish Sentiment")
 
 try:
-    var_value, cvar_value, filtered_returns = analysis.calculate_conditional_var(
-        aggr_df, target_stock_df, sentiment_threshold=-0.3
+    var_value, cvar_value, std_dev = analysis.calculate_conditional_var(
+        aggr_df,
+        market_df=target_stock_df,
+        sentiment_col='sentiment',
+        sentiment_threshold=-0.3,
+        alpha=0.05
     )
     st.metric("Value at Risk (VaR)", f"{var_value:.2%}")
     st.metric("Conditional VaR (CVaR)", f"{cvar_value:.2%}")
+    st.metric("Tail Std Dev", f"{std_dev:.2%}")
 except Exception as e:
     st.warning(f"Could not compute VaR/CVaR: {e}")
