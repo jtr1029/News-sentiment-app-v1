@@ -13,13 +13,13 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
         f"q={query}&from={from_date}&to={to_date}"
         f"&language=en&sortBy=publishedAt&pageSize=100&apiKey={API_KEY}"
     )
-    
-print("🔍 URL being requested:", url)
 
-response = requests.get(url)
-if response.status_code != 200:
-    print("❌ API request failed:", response.text)
-    return pd.DataFrame()
+    print("🔍 URL being requested:", url)
+
+    response = requests.get(url)
+    if response.status_code != 200:
+        print("❌ API request failed:", response.text)
+        return pd.DataFrame()
 
     articles = response.json().get("articles", [])
     if not articles:
@@ -33,7 +33,7 @@ if response.status_code != 200:
         title = article.get("title", "")
         if published_at and title:
             records.append({
-                "date": published_at[:10],   # Just the YYYY-MM-DD
+                "date": published_at[:10],  # Just the YYYY-MM-DD
                 "text": title
             })
 
@@ -42,4 +42,3 @@ if response.status_code != 200:
     print(df.head())
 
     return df
-
