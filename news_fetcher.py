@@ -13,6 +13,8 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
         f"q={query}&from={from_date}&to={to_date}"
         f"&language=en&sortBy=publishedAt&pageSize=100&apiKey={API_KEY}"
     )
+    
+print("🔍 URL being requested:", url)
 
     response = requests.get(url)
     if response.status_code != 200:
