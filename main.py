@@ -111,7 +111,7 @@ try:
         aggr_df,
         market_df=target_stock_df,
         sentiment_col='sentiment',
-        sentiment_threshold=-0.3,
+        sentiment_threshold=-0.1,
         alpha=0.05
     )
     st.metric("Value at Risk (VaR)", f"{var_value:.2%}")
