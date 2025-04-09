@@ -16,7 +16,7 @@ def fetch_news(ticker, from_date, to_date, max_articles=100):
     
 print("🔍 URL being requested:", url)
 
-    response = requests.get(url)
+response = requests.get(url)
     if response.status_code != 200:
         print("❌ API request failed:", response.text)
         return pd.DataFrame()
