@@ -85,4 +85,4 @@ dist_plot = analysis.plot_sentiment_distribution(scored_df)
 st.pyplot(dist_plot)
 
 # 📈 Aggregated sentiment over time
-aggr_df = aggregation.aggregate_sentiment(scored)
+aggr_df = aggregation.aggregate_sentiment(scored_df)
